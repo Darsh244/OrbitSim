@@ -13,6 +13,7 @@ add_executable(OrbitSim
     src/Simulator.cpp
     src/renderer/Renderer.cpp
     src/physics/PhysicsEngine.cpp
+    src/core/Timer.cpp
 )
 
 target_include_directories(OrbitSim PRIVATE include)

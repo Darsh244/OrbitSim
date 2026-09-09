@@ -12,13 +12,19 @@ Simulator::Simulator(unsigned windowWidth, unsigned windowHeight) {
 void Simulator::run() {
   sf::Clock clock;
   clock.start();
+  float oldTime = clock.getElapsedTime().asSeconds();
   while (window.isOpen()) {
-    while (const std::optional event = window.pollEvent())
+    float currentTime = clock.getElapsedTime().asSeconds();
+    float dT = currentTime - oldTime;
+    oldTime = currentTime;
+
+    while (const std::optional event = window.pollEvent()) {
       handleEvent(
           *event); // handleEvent expects a sf::Event, even is std::optional
+    }
 
+    engine.moveBodies(dT);
     window.clear();
-
     for (auto &body : engine.getBodies()) {
       Renderer::draw(window, body);
     }

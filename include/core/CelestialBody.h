@@ -11,8 +11,8 @@ class CelestialBody {
   sf::Color color;
 
 public:
-  CelestialBody(float m, float r, sf::Vector2f p, sf::Vector2f v,
-                sf::Vector2f a, sf::Color c)
+  CelestialBody(float m, float r, sf::Vector2f p, sf::Vector2f v = {0, 0},
+                sf::Vector2f a = {0, 0}, sf::Color c = COLOR::RED)
       : mass(m), radius(r), position(p), velocity(v), acc(a), color(c) {}
 
   // getters

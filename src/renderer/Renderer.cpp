@@ -12,3 +12,11 @@ void Renderer::draw(sf::RenderWindow &win, const CelestialBody &body) {
   bodyShape.setFillColor(body.getColor());
   win.draw(bodyShape);
 }
+
+void Renderer::drawLine(sf::RenderWindow &win, sf::Vector2f &startPosition,
+                        sf::Vector2f &endPosition) {
+
+  sf::Vertex line[] = {sf::Vertex{startPosition, COLOR::RED},
+                       sf::Vertex{endPosition, COLOR::RED}};
+  win.draw(line, 2, sf::PrimitiveType::Lines);
+}

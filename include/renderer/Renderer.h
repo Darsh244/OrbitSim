@@ -6,4 +6,6 @@ class Renderer {
 public:
   Renderer() = delete;
   static void draw(sf::RenderWindow &win, const CelestialBody &body);
+  static void drawLine(sf::RenderWindow &win, sf::Vector2f &startPosition,
+                       sf::Vector2f &endPosition);
 };

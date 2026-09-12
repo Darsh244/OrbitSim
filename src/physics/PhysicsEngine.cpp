@@ -2,6 +2,12 @@
 #include "core/CelestialBody.h"
 #include <cmath>
 
+// UTILITY
+void PhysicsEngine::removeBodyAtIndex(const int idx) {
+  bodies[idx] = bodies.back();
+  bodies.pop_back();
+}
+
 void PhysicsEngine::moveBodies(float timeElapsed) {
   for (auto &body : bodies) {
     sf::Vector2f oldPos = body.getPosition();
@@ -13,6 +19,75 @@ void PhysicsEngine::moveBodies(float timeElapsed) {
   }
 }
 
+// COLLISIONS
+void PhysicsEngine::calculateCollisions() {
+  std::vector<bool> merged(bodies.size(), false);
+  std::vector<CelestialBody> mergedBodies;
+
+  for (int i = 0; i < bodies.size(); i++) {
+    if (merged[i])
+      continue;
+    for (int j = i + 1; j < bodies.size(); j++) {
+      if (merged[j])
+        continue;
+      if (isColliding(bodies[i], bodies[j])) {
+        CelestialBody body1 = bodies[i];
+        CelestialBody body2 = bodies[j];
+        sf::Vector2f resultingVelocity =
+            velocityOfMergedBodyAfterCollision(body1, body2);
+        sf::Vector2f resultingPosition =
+            posOfMergedBodyAfterCollision(body1, body2);
+        float resultingMass = body1.getMass() + body2.getMass();
+        float resultingRadius = sqrtf(body1.getRadius() * body1.getRadius() +
+                                      body2.getRadius() * body2.getRadius());
+
+        merged[i] = true;
+        merged[j] = true;
+        mergedBodies.push_back({resultingMass, resultingRadius,
+                                resultingPosition, resultingVelocity});
+        break; // body i is now merged, stop comparing it against others
+      }
+    }
+  }
+
+  for (int i = bodies.size() - 1; i >= 0;
+       i--) { // going in reverse so indices of previous bodies dont change
+    if (merged[i])
+      removeBodyAtIndex(i);
+  }
+
+  for (auto &body : mergedBodies) {
+    add(body);
+  }
+}
+bool PhysicsEngine::isColliding(const CelestialBody &body1,
+                                const CelestialBody &body2) {
+  sf::Vector2f displacementVectorBetweenBodies =
+      body2.getPosition() - body1.getPosition();
+  float sqrDistance = powf(displacementVectorBetweenBodies.x, 2) +
+                      powf(displacementVectorBetweenBodies.y, 2);
+  float sqrSumOfRadius = powf(body1.getRadius() + body2.getRadius(), 2);
+  return sqrDistance <= sqrSumOfRadius;
+}
+
+sf::Vector2f
+PhysicsEngine::velocityOfMergedBodyAfterCollision(const CelestialBody &body1,
+                                                  const CelestialBody &body2) {
+  sf::Vector2f sumOfInitialMomentums = body1.getMass() * body1.getVelocity() +
+                                       body2.getMass() * body2.getVelocity();
+  return sumOfInitialMomentums / (body1.getMass() + body2.getMass());
+}
+
+sf::Vector2f
+PhysicsEngine::posOfMergedBodyAfterCollision(const CelestialBody &body1,
+                                             const CelestialBody &body2) {
+  sf::Vector2f weightedPos = body1.getMass() * body1.getPosition() +
+                             body2.getMass() * body2.getPosition();
+  return weightedPos /
+         (body1.getMass() + body2.getMass()); // this is the position of C.O.M
+}
+
+// GRAVITY
 void PhysicsEngine::calculateGravity(CelestialBody &body1,
                                      CelestialBody &body2) {
   float m1 = body1.getMass();

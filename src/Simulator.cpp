@@ -37,6 +37,9 @@ void Simulator::handlePhysics() {
     }
   }
   engine.moveBodies(timer.getDeltaTime()); // uses time since last frame
+
+  // collision detection
+  engine.calculateCollisions();
 }
 
 void Simulator::handleRendering() {

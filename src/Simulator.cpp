@@ -16,20 +16,36 @@ void Simulator::run() {
   while (window.isOpen()) {
     while (const std::optional event = window.pollEvent()) {
       handleEvent(
-          *event); // handleEvent expects a sf::Event, even is std::optional
+          *event); // handleEvent expects a sf::Event, event is std::optional
     }
-
-    engine.moveBodies(
-        timer.getDeltaTime()); // moves bodies using time since last frame
+    handlePhysics();
     window.clear();
-    for (auto &body : engine.getBodies()) {
-      Renderer::draw(window, body);
-    }
-    if (isSpawningBody && !canSpawnBody) {
-      Renderer::drawLine(window, currentSpawiningBodyPosition,
-                         velocityLineEndPos);
-    }
+    handleRendering();
     window.display();
+  }
+}
+
+void Simulator::handlePhysics() {
+  for (CelestialBody body : engine.getBodies()) {
+    body.setAcceleration({0, 0});
+  }
+
+  // gravity
+  for (int i = 0; i < engine.getBodies().size(); i++) {
+    for (int j = i + 1; j < engine.getBodies().size(); j++) {
+      engine.calculateGravity(engine.getBodies()[i], engine.getBodies()[j]);
+    }
+  }
+  engine.moveBodies(timer.getDeltaTime()); // uses time since last frame
+}
+
+void Simulator::handleRendering() {
+  for (auto &body : engine.getBodies()) {
+    Renderer::draw(window, body);
+  }
+  if (isSpawningBody && !canSpawnBody) {
+    Renderer::drawLine(window, currentSpawiningBodyPosition,
+                       velocityLineEndPos);
   }
 }
 
@@ -68,5 +84,5 @@ sf::Vector2f Simulator::calculateVelocityLineEndPos(sf::Vector2f &mousePos) {
 }
 
 void Simulator::spawnTestBodyWithVelocity(sf::Vector2f &v) {
-  engine.add(CelestialBody(0, 20, currentSpawiningBodyPosition, v));
+  engine.add(CelestialBody(50, 20, currentSpawiningBodyPosition, v));
 }

@@ -19,6 +19,8 @@ public:
 
 private:
   void handleEvent(const sf::Event &event);
+  void handleRendering();
+  void handlePhysics();
   sf::Vector2f calculateVelocityLineEndPos(
       sf::Vector2f &mousePos); // calculates and returns the end position of the
                                // velocity line for the currently spawning body

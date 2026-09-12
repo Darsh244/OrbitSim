@@ -26,7 +26,7 @@ void Simulator::run() {
 }
 
 void Simulator::handlePhysics() {
-  for (CelestialBody body : engine.getBodies()) {
+  for (CelestialBody &body : engine.getBodies()) {
     body.setAcceleration({0, 0});
   }
 

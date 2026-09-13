@@ -19,6 +19,12 @@ void PhysicsEngine::moveBodies(float timeElapsed) {
   }
 }
 
+void PhysicsEngine::resetAcceleration() {
+  for (CelestialBody &body : bodies) {
+    body.setAcceleration({0, 0});
+  }
+}
+
 // COLLISIONS
 void PhysicsEngine::calculateCollisions() {
   std::vector<bool> merged(bodies.size(), false);
@@ -88,8 +94,16 @@ PhysicsEngine::posOfMergedBodyAfterCollision(const CelestialBody &body1,
 }
 
 // GRAVITY
-void PhysicsEngine::calculateGravity(CelestialBody &body1,
-                                     CelestialBody &body2) {
+void PhysicsEngine::calculateGravity() {
+  for (int i = 0; i < bodies.size(); i++) {
+    for (int j = i + 1; j < bodies.size(); j++) {
+      calculateGravityBetweenBodies(bodies[i], bodies[j]);
+    }
+  }
+}
+
+void PhysicsEngine::calculateGravityBetweenBodies(CelestialBody &body1,
+                                                  CelestialBody &body2) {
   float m1 = body1.getMass();
   float m2 = body2.getMass();
   sf::Vector2f pos1 = body1.getPosition();

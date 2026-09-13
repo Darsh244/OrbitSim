@@ -26,19 +26,11 @@ void Simulator::run() {
 }
 
 void Simulator::handlePhysics() {
-  for (CelestialBody &body : engine.getBodies()) {
-    body.setAcceleration({0, 0});
-  }
-
-  // gravity
-  for (int i = 0; i < engine.getBodies().size(); i++) {
-    for (int j = i + 1; j < engine.getBodies().size(); j++) {
-      engine.calculateGravity(engine.getBodies()[i], engine.getBodies()[j]);
-    }
-  }
+  engine.resetAcceleration(); // if you dont reset then acceleration will
+                              // continuously accumulate, instead of being
+                              // recalculated for current state
+  engine.calculateGravity();
   engine.moveBodies(timer.getDeltaTime()); // uses time since last frame
-
-  // collision detection
   engine.calculateCollisions();
 }
 

@@ -1,10 +1,12 @@
 #pragma once
+#include "core/Camera.h"
 #include "core/Timer.h"
 #include "physics/PhysicsEngine.h"
 
 class Simulator {
   sf::RenderWindow window;
   PhysicsEngine engine;
+  Camera camera;
   Timer timer;
 
   // body spawning attributes
@@ -26,5 +28,5 @@ private:
                                // velocity line for the currently spawning body
 
   // Testing
-  void spawnTestBodyWithVelocity(sf::Vector2f &v);
+  void spawnTestBodyWithVelocity(const sf::Vector2f &v = {0, 0});
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include "core/Camera.h"
 #include "core/Timer.h"
+#include "core/UI.h"
 #include "physics/PhysicsEngine.h"
 
 class Simulator {
@@ -8,6 +9,9 @@ class Simulator {
   PhysicsEngine engine;
   Camera camera;
   Timer timer;
+  UI ui;
+
+  bool shouldWindowClose = false;
 
   // body spawning attributes
   sf::Vector2f currentSpawiningBodyPosition;

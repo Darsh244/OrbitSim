@@ -20,3 +20,6 @@ compile_commands.json
 # test output & cache
 Testing/
 .cache/
+
+# other files
+imgui.ini

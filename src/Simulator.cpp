@@ -2,28 +2,38 @@
 #include "core/CelestialBody.h"
 #include "physics/PhysicsEngine.h"
 #include "renderer/Renderer.h"
+#include <SFML/Window/WindowEnums.hpp>
 #include <iostream>
 
-Simulator::Simulator(unsigned windowWidth, unsigned windowHeight) {
-  window =
-      sf::RenderWindow(sf::VideoMode({windowWidth, windowHeight}), "Window");
+Simulator::Simulator(unsigned windowWidth, unsigned windowHeight)
+    : window(sf::VideoMode({windowWidth, windowHeight}), "OrbitSim",
+             sf::Style::Titlebar | sf::Style::Close),
+      ui(window) {
+
   window.setFramerateLimit(60);
   engine = PhysicsEngine();
   timer = Timer();
 }
 
 void Simulator::run() {
-  engine.add(CelestialBody(50, 20, {100, 150}, {0, 0}));
-  while (window.isOpen()) {
+  while (window.isOpen() && !shouldWindowClose) {
+    timer.update();
     while (const std::optional event = window.pollEvent()) {
+      ui.processEvent(*event);
       handleEvent(
           *event); // handleEvent expects a sf::Event, event is std::optional
     }
+    ui.update(timer.getdeltaTimeSFML());
     handlePhysics();
+
     window.clear();
+    ui.draw();
     handleRendering();
     window.display();
   }
+
+  ui.shutdown();
+  window.close();
 }
 
 void Simulator::handlePhysics() {
@@ -43,11 +53,15 @@ void Simulator::handleRendering() {
     Renderer::drawLine(window, currentSpawiningBodyPosition, velocityLineEndPos,
                        camera);
   }
+  ui.render();
 }
 
 void Simulator::handleEvent(const sf::Event &event) {
+  if (ui.hasMouseCapture())
+    return; // dont allow spawning or camera controls when cursor inside ui
+
   if (event.is<sf::Event::Closed>()) {
-    window.close();
+    shouldWindowClose = true;
   }
 
   else if (event.is<sf::Event::MouseButtonPressed>()) {

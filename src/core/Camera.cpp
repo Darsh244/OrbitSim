@@ -6,7 +6,7 @@ void Camera::handleClick(const sf::Vector2f &newMousePos) {
 }
 
 void Camera::handleDrag(const sf::Vector2f &newMousePos) {
-  mouseDragVector = newMousePos - mousePos;
+  mouseDragVector = -(newMousePos - mousePos);
   cameraOffset += cameraPanningSpeed * mouseDragVector / zoomValue;
   mousePos = newMousePos; // to avoid camera acceleration if you keep dragging
 }

@@ -1,5 +1,4 @@
 #include "physics/PhysicsEngine.h"
-#include "core/CelestialBody.h"
 #include <cmath>
 
 // UTILITY

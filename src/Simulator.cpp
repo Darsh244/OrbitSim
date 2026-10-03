@@ -1,5 +1,4 @@
 #include "Simulator.h"
-#include "core/CelestialBody.h"
 #include "physics/PhysicsEngine.h"
 #include "renderer/Renderer.h"
 #include <SFML/Window/WindowEnums.hpp>

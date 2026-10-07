@@ -14,6 +14,14 @@ class UI {
   ImVec2 sidePanelSize;
   static constexpr float SIDE_PANEL_WIDTH = 200.0f;
 
+  // input variables
+  float input_mass;
+  float input_radius;
+  float input_simulation_speed;
+  static constexpr float DEFAULT_INPUT_MASS = 50.0f;
+  static constexpr float DEFAULT_INPUT_RADIUS = 20.0f;
+  static constexpr float DEFAULT_SIMULATION_SPEED = 1.0f;
+
 public:
   UI(sf::RenderWindow &win);
   void update(sf::Time dt);
@@ -24,4 +32,9 @@ public:
   void draw();
   void render();
   void shutdown();
+
+  // getters
+  float getInputMass() const { return input_mass; }
+  float getInputRadius() { return input_radius; }
+  float getSimulationSpeed() { return input_simulation_speed; }
 };

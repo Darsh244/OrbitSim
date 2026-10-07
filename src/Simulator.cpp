@@ -40,7 +40,8 @@ void Simulator::handlePhysics() {
                               // continuously accumulate, instead of being
                               // recalculated for current state
   engine.calculateGravity();
-  engine.moveBodies(timer.getDeltaTime()); // uses time since last frame
+  engine.moveBodies(timer.getDeltaTime() *
+                    ui.getSimulationSpeed()); // uses time since last frame
   engine.calculateCollisions();
 }
 
@@ -109,7 +110,7 @@ void Simulator::handleEvent(const sf::Event &event) {
       camera.handleMouseRelease(mousePos);
     } else if (isSpawningBody && !canSpawnBody) {
       sf::Vector2f velocity = velocityLineEndPos - currentSpawiningBodyPosition;
-      spawnTestBodyWithVelocity(velocity);
+      spawnBodyWithVelocity(velocity);
       isSpawningBody = false;
       canSpawnBody = true;
     }
@@ -121,6 +122,14 @@ sf::Vector2f Simulator::calculateVelocityLineEndPos(sf::Vector2f &mousePos) {
   return (currentSpawiningBodyPosition + vectorToVelocityLineEndPos);
 }
 
+void Simulator::spawnBodyWithVelocity(const sf::Vector2f &v) {
+  float input_mass = ui.getInputMass();
+  float input_radius = ui.getInputRadius();
+  engine.add(
+      CelestialBody(input_mass, input_radius, currentSpawiningBodyPosition, v));
+}
+
+// Testing
 void Simulator::spawnTestBodyWithVelocity(const sf::Vector2f &v) {
   engine.add(CelestialBody(50, 20, currentSpawiningBodyPosition, v));
 }

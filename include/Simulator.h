@@ -31,6 +31,7 @@ private:
       sf::Vector2f &mousePos); // calculates and returns the end position of the
                                // velocity line for the currently spawning body
 
+  void spawnBodyWithVelocity(const sf::Vector2f &v);
   // Testing
   void spawnTestBodyWithVelocity(const sf::Vector2f &v = {0, 0});
 };

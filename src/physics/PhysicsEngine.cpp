@@ -2,6 +2,13 @@
 #include <cmath>
 
 // UTILITY
+void PhysicsEngine::addCelestialBody(float m, float r, sf::Vector2f p,
+                                     sf::Vector2f v, sf::Vector2f a,
+                                     sf::Color c) {
+  incrementCount();
+  bodies.push_back({countBodies, m, r, p, v, a, c});
+}
+
 void PhysicsEngine::removeBodyAtIndex(const int idx) {
   bodies[idx] = bodies.back();
   bodies.pop_back();
@@ -27,7 +34,8 @@ void PhysicsEngine::resetAcceleration() {
 // COLLISIONS
 void PhysicsEngine::calculateCollisions() {
   std::vector<bool> merged(bodies.size(), false);
-  std::vector<CelestialBody> mergedBodies;
+  std::vector<std::tuple<float, float, sf::Vector2f, sf::Vector2f>>
+      mergedBodies;
 
   for (int i = 0; i < bodies.size(); i++) {
     if (merged[i])
@@ -61,8 +69,10 @@ void PhysicsEngine::calculateCollisions() {
       removeBodyAtIndex(i);
   }
 
-  for (auto &body : mergedBodies) {
-    add(body);
+  for (int i = 0; i < mergedBodies.size(); i++) {
+    addCelestialBody(std::get<0>(mergedBodies[i]), std::get<1>(mergedBodies[i]),
+                     std::get<2>(mergedBodies[i]),
+                     std::get<3>(mergedBodies[i]));
   }
 }
 bool PhysicsEngine::isColliding(const CelestialBody &body1,

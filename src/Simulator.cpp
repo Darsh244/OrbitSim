@@ -125,11 +125,11 @@ sf::Vector2f Simulator::calculateVelocityLineEndPos(sf::Vector2f &mousePos) {
 void Simulator::spawnBodyWithVelocity(const sf::Vector2f &v) {
   float input_mass = ui.getInputMass();
   float input_radius = ui.getInputRadius();
-  engine.add(
-      CelestialBody(input_mass, input_radius, currentSpawiningBodyPosition, v));
+  engine.addCelestialBody(input_mass, input_radius,
+                          currentSpawiningBodyPosition, v);
 }
 
 // Testing
 void Simulator::spawnTestBodyWithVelocity(const sf::Vector2f &v) {
-  engine.add(CelestialBody(50, 20, currentSpawiningBodyPosition, v));
+  engine.addCelestialBody(50, 20, currentSpawiningBodyPosition, v);
 }

@@ -4,6 +4,7 @@
 
 class PhysicsEngine {
   std::vector<CelestialBody> bodies;
+  int countBodies = 1;
 
   // universal constants
   static constexpr float G = 500.0f;
@@ -14,7 +15,9 @@ public:
   PhysicsEngine() : bodies{} {}
 
   // UTILITY
-  void add(CelestialBody body) { bodies.push_back(body); };
+  void addCelestialBody(float m, float r, sf::Vector2f p,
+                        sf::Vector2f v = {0, 0}, sf::Vector2f a = {0, 0},
+                        sf::Color c = COLOR::RED);
   void resetAcceleration();
   void moveBodies(float timeElapsed); // given the time elapsed (in seconds),
                                       // it moves each body accordingly
@@ -29,6 +32,7 @@ public:
 
 private:
   void removeBodyAtIndex(const int idx);
+  void incrementCount() { countBodies++; }
 
   // GRAVITY HELPERS
   void calculateGravityBetweenBodies(CelestialBody &body1,

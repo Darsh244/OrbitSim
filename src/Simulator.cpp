@@ -27,6 +27,19 @@ void Simulator::run() {
 
     window.clear();
     ui.draw();
+    if (selectedBodyId) {
+      if (auto info = engine.getBodyInfo(*selectedBodyId)) {
+        sf::Vector2f anchor = camera.giveScreenPos(info->position);
+        ui.showBodyInfo(*info, anchor.x, anchor.y);
+      } else {
+        selectedBodyId.reset();
+        ui.resetInspectorLayout();
+      }
+    }
+    if (ui.consumeInspectorClose()) {
+      selectedBodyId.reset();
+      ui.resetInspectorLayout();
+    }
     handleRendering();
     window.display();
   }
@@ -36,7 +49,7 @@ void Simulator::run() {
 }
 
 void Simulator::handlePhysics() {
-  engine.resetAcceleration(); // if you dont reset then acceleration will
+  engine.resetAcceleration(); // if we dont reset then acceleration will
                               // continuously accumulate, instead of being
                               // recalculated for current state
   engine.calculateGravity();
@@ -68,6 +81,13 @@ void Simulator::handleEvent(const sf::Event &event) {
     const auto *mouseButtonPressed =
         event.getIf<sf::Event::MouseButtonPressed>();
     sf::Vector2f mousePos(mouseButtonPressed->position);
+    if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
+      if (auto id = engine.findBodyAt(camera.giveWorldPos(mousePos))) {
+        selectedBodyId = id;
+      } else if (!camera.getIsClicking()) {
+        camera.handleClick(mousePos);
+      }
+    }
     if (mouseButtonPressed->button == sf::Mouse::Button::Left &&
         !camera.getIsClicking()) {
       camera.handleClick(mousePos);

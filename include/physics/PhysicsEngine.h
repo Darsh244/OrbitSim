@@ -1,5 +1,7 @@
 #pragma once
+#include "core/BodyInfo.h"
 #include "core/CelestialBody.h"
+#include <optional>
 #include <vector>
 
 class PhysicsEngine {
@@ -23,6 +25,10 @@ public:
                                       // it moves each body accordingly
   const std::vector<CelestialBody> &getBodies() const { return bodies; }
   std::vector<CelestialBody> &getBodies() { return bodies; }
+
+  // mouse click detection
+  std::optional<int> findBodyAt(const sf::Vector2f &mouseWorldPos) const;
+  std::optional<BodyInfo> getBodyInfo(const int id) const;
 
   // GRAVITY
   void calculateGravity();

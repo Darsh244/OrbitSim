@@ -1,4 +1,5 @@
 #pragma once
+#include "core/BodyInfo.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <imgui.h>
@@ -22,6 +23,17 @@ class UI {
   static constexpr float DEFAULT_INPUT_RADIUS = 20.0f;
   static constexpr float DEFAULT_SIMULATION_SPEED = 1.0f;
 
+  // inspector window
+  ImVec2 inspectorPanelSize;
+  static constexpr float INSPECTOR_WIDTH = 215.0f;
+  static constexpr float INSPECTOR_HEIGHT = 165.0f;
+  static constexpr float INSPECTOR_OFFSET_X = 15.0f;
+  static constexpr float INSPECTOR_OFFSET_Y = 15.0f;
+
+  bool inspectorMoved = false;
+  bool inspectorCloseRequested = false;
+  bool inspectorResized = false;
+
 public:
   UI(sf::RenderWindow &win);
   void update(sf::Time dt);
@@ -32,6 +44,12 @@ public:
   void draw();
   void render();
   void shutdown();
+
+  // inspector window
+  void showBodyInfo(const BodyInfo &info, const float anchorX,
+                    const float anchorY);
+  bool consumeInspectorClose();
+  void resetInspectorLayout();
 
   // getters
   float getInputMass() const { return input_mass; }

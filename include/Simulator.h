@@ -12,6 +12,7 @@ class Simulator {
   UI ui;
 
   bool shouldWindowClose = false;
+  std::optional<int> selectedBodyId;
 
   // body spawning attributes
   sf::Vector2f currentSpawiningBodyPosition;

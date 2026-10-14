@@ -31,6 +31,46 @@ void PhysicsEngine::resetAcceleration() {
   }
 }
 
+// mouse click detection
+std::optional<int>
+PhysicsEngine::findBodyAt(const sf::Vector2f &mouseWorldPos) const {
+  for (int i = bodies.size() - 1; i >= 0; i--) {
+    sf::Vector2f d = mouseWorldPos - bodies[i].getPosition();
+    float r = bodies[i].getRadius();
+    bool inside = d.x * d.x + d.y * d.y <= r * r;
+    if (inside) {
+      return bodies[i].getId();
+    }
+  }
+  return std::nullopt;
+}
+
+std::optional<BodyInfo> PhysicsEngine::getBodyInfo(const int bodyId) const {
+  int left = 0;
+  int right = bodies.size() - 1;
+  while (left <= right) {
+    int mid = (left + right) / 2;
+    int id = bodies[mid].getId();
+    if (id == bodyId) {
+      float mass = bodies[mid].getMass();
+      sf::Vector2f velocity = bodies[mid].getVelocity();
+      float speed = velocity.length();
+      return BodyInfo{bodyId,
+                      mass,
+                      bodies[mid].getRadius(),
+                      bodies[mid].getPosition(),
+                      velocity,
+                      speed,
+                      mass * velocity,
+                      0.5f * mass * speed * speed};
+    } else if (id < bodyId) {
+      left = mid + 1;
+    } else
+      right = mid - 1;
+  }
+  return std::nullopt;
+}
+
 // COLLISIONS
 void PhysicsEngine::calculateCollisions() {
   std::vector<bool> merged(bodies.size(), false);

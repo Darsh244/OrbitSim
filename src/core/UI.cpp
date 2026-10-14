@@ -14,6 +14,8 @@ UI::UI(sf::RenderWindow &win) : window(win) {
   sidePanelPos = {(size.x - SIDE_PANEL_WIDTH), TOP_PANEL_HEIGHT};
   sidePanelSize = {SIDE_PANEL_WIDTH, (size.y - TOP_PANEL_HEIGHT)};
 
+  inspectorPanelSize = {INSPECTOR_WIDTH, INSPECTOR_HEIGHT};
+
   input_mass = DEFAULT_INPUT_MASS;
   input_radius = DEFAULT_INPUT_RADIUS;
   input_simulation_speed = DEFAULT_SIMULATION_SPEED;
@@ -35,7 +37,6 @@ void UI::draw() {
                    ImGuiWindowFlags_NoCollapse);
   ImGui::InputFloat("Mass", &input_mass);
   ImGui::InputFloat("Radius", &input_radius);
-  // TODO: drop-down containing all bodies and select to center camera
   ImGui::End();
 
   ImGui::SetNextWindowPos(topPanelPos);
@@ -46,6 +47,68 @@ void UI::draw() {
   ImGui::SliderFloat("Simulation Speed", &input_simulation_speed, 0.2f, 5.0f,
                      "%.2fx");
   ImGui::End();
+}
+
+void UI::showBodyInfo(const BodyInfo &info, const float anchorX,
+                      const float anchorY) {
+
+  ImVec2 wantedPos = {anchorX + INSPECTOR_OFFSET_X,
+                      anchorY + INSPECTOR_OFFSET_Y};
+
+  if (!inspectorMoved) {
+    ImGui::SetNextWindowPos(wantedPos);
+  }
+  if (!inspectorResized) {
+    ImGui::SetNextWindowSize(inspectorPanelSize);
+  }
+
+  bool open = true;
+  ImGui::Begin("Inspector", &open);
+
+  ImVec2 pos = ImGui::GetWindowPos();
+  ImVec2 size = ImGui::GetWindowSize();
+
+  // TODO: can't drag inspector without first resizing when only one body is on
+  // screen - suspect the moved comparisions below
+  if (!inspectorMoved &&
+      (pos.x - wantedPos.x != 0 || pos.y - wantedPos.y != 0)) {
+    inspectorMoved = true;
+  }
+  if (!inspectorResized && (size.x - inspectorPanelSize.x != 0 ||
+                            size.y - inspectorPanelSize.y != 0)) {
+    inspectorResized = true;
+  }
+
+  ImGui::SeparatorText("Identity");
+  ImGui::Text("Id: %d", info.id);
+  ImGui::Text("Mass: %.2f kg", info.mass);
+  ImGui::Text("Radius: %.2f m", info.radius);
+
+  ImGui::SeparatorText("Motion");
+  ImGui::Text("Position: (%.2f, %.2f)", info.position.x, info.position.y);
+  ImGui::Text("Velocity: (%.2f, %.2f)", info.velocity.x, info.velocity.y);
+  ImGui::Text("Speed: %.2f m/s", info.speed);
+
+  ImGui::SeparatorText("Derived");
+  ImGui::Text("Momentum: (%.2f, %.2f)", info.momentum.x, info.momentum.y);
+  ImGui::Text("Kinetic Energy: %.2f J", info.kineticEnergy);
+
+  ImGui::End();
+
+  if (!open) {
+    inspectorCloseRequested = true;
+    resetInspectorLayout();
+  }
+}
+void UI::resetInspectorLayout() {
+  inspectorResized = false;
+  inspectorMoved = false;
+}
+
+bool UI::consumeInspectorClose() {
+  bool requested = inspectorCloseRequested;
+  inspectorCloseRequested = false;
+  return requested;
 }
 
 void UI::render() { ImGui::SFML::Render(window); }

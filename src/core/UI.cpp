@@ -65,18 +65,15 @@ void UI::showBodyInfo(const BodyInfo &info, const float anchorX,
   bool open = true;
   ImGui::Begin("Inspector", &open);
 
-  ImVec2 pos = ImGui::GetWindowPos();
   ImVec2 size = ImGui::GetWindowSize();
-
-  // TODO: can't drag inspector without first resizing when only one body is on
-  // screen - suspect the moved comparisions below
-  if (!inspectorMoved &&
-      (pos.x - wantedPos.x != 0 || pos.y - wantedPos.y != 0)) {
-    inspectorMoved = true;
-  }
   if (!inspectorResized && (size.x - inspectorPanelSize.x != 0 ||
                             size.y - inspectorPanelSize.y != 0)) {
     inspectorResized = true;
+  }
+
+  if (!inspectorMoved && !inspectorResized && ImGui::IsWindowFocused() &&
+      ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+    inspectorMoved = true;
   }
 
   ImGui::SeparatorText("Identity");

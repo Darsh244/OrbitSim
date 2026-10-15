@@ -8,13 +8,16 @@ class PhysicsEngine {
   std::vector<CelestialBody> bodies;
   int countBodies = 1;
 
-  // universal constants
-  static constexpr float G = 500.0f;
-  static constexpr float KG_PER_MASS_UNIT = 1.0f;
-  static constexpr float METERS_PER_PIXEL = 1.0f;
+  // engine variables
+  float G;
+  float KG_PER_MASS_UNIT;
+  float METERS_PER_PIXEL;
+  static constexpr float DEFAULT_G = 500.0f;
+  static constexpr float DEFAULT_KG_PER_MASS_UNIT = 1.0f;
+  static constexpr float DEFAULT_METERS_PER_PIXEL = 1.0f;
 
 public:
-  PhysicsEngine() : bodies{} {}
+  PhysicsEngine();
 
   // UTILITY
   void addCelestialBody(float m, float r, sf::Vector2f p,
@@ -23,6 +26,7 @@ public:
   void resetAcceleration();
   void moveBodies(float timeElapsed); // given the time elapsed (in seconds),
                                       // it moves each body accordingly
+  void resetEngine();
   const std::vector<CelestialBody> &getBodies() const { return bodies; }
   std::vector<CelestialBody> &getBodies() { return bodies; }
 

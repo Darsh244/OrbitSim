@@ -1,6 +1,7 @@
 #include "Simulator.h"
 #include "physics/PhysicsEngine.h"
 #include "renderer/Renderer.h"
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/WindowEnums.hpp>
 #include <iostream>
 
@@ -23,10 +24,10 @@ void Simulator::run() {
           *event); // handleEvent expects a sf::Event, event is std::optional
     }
     ui.update(timer.getdeltaTimeSFML());
-    handlePhysics();
-
+    if (!paused)
+      handlePhysics();
     window.clear();
-    ui.draw();
+    ui.draw(paused);
     if (selectedBodyId) {
       if (auto info = engine.getBodyInfo(*selectedBodyId)) {
         sf::Vector2f anchor = camera.giveScreenPos(info->position);
@@ -46,6 +47,16 @@ void Simulator::run() {
 
   ui.shutdown();
   window.close();
+}
+
+void Simulator::resetSimulator() {
+  shouldWindowClose = false;
+  paused = false;
+  selectedBodyId.reset();
+  canSpawnBody = true;
+  isSpawningBody = false;
+  engine.resetEngine();
+  ui.resetUI();
 }
 
 void Simulator::handlePhysics() {
@@ -133,6 +144,15 @@ void Simulator::handleEvent(const sf::Event &event) {
       spawnBodyWithVelocity(velocity);
       isSpawningBody = false;
       canSpawnBody = true;
+    }
+  }
+
+  else if (event.is<sf::Event::KeyPressed>()) {
+    const auto *keyPressed = event.getIf<sf::Event::KeyPressed>();
+    if (keyPressed->code == sf::Keyboard::Key::Space) {
+      paused = !paused;
+    } else if (keyPressed->code == sf::Keyboard::Key::R) {
+      resetSimulator();
     }
   }
 }

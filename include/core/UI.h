@@ -41,9 +41,10 @@ public:
   void processEvent(const sf::Event &event);
   bool hasMouseCapture();
 
-  void draw();
+  void draw(const bool isPaused);
   void render();
   void shutdown();
+  void resetUI();
 
   // inspector window
   void showBodyInfo(const BodyInfo &info, const float anchorX,

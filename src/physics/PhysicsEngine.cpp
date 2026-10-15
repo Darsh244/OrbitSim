@@ -1,6 +1,12 @@
 #include "physics/PhysicsEngine.h"
 #include <cmath>
 
+PhysicsEngine::PhysicsEngine() : bodies{} {
+  G = DEFAULT_G;
+  KG_PER_MASS_UNIT = DEFAULT_KG_PER_MASS_UNIT;
+  METERS_PER_PIXEL = DEFAULT_METERS_PER_PIXEL;
+}
+
 // UTILITY
 void PhysicsEngine::addCelestialBody(float m, float r, sf::Vector2f p,
                                      sf::Vector2f v, sf::Vector2f a,
@@ -29,6 +35,14 @@ void PhysicsEngine::resetAcceleration() {
   for (CelestialBody &body : bodies) {
     body.setAcceleration({0, 0});
   }
+}
+
+void PhysicsEngine::resetEngine() {
+  G = DEFAULT_G;
+  KG_PER_MASS_UNIT = DEFAULT_KG_PER_MASS_UNIT;
+  METERS_PER_PIXEL = DEFAULT_METERS_PER_PIXEL;
+  bodies.clear();
+  countBodies = 1;
 }
 
 // mouse click detection

@@ -12,6 +12,7 @@ class Simulator {
   UI ui;
 
   bool shouldWindowClose = false;
+  bool paused = false;
   std::optional<int> selectedBodyId;
 
   // body spawning attributes
@@ -23,6 +24,7 @@ class Simulator {
 public:
   Simulator(unsigned windowWidth, unsigned windowHeight);
   void run();
+  void resetSimulator();
 
 private:
   void handleEvent(const sf::Event &event);

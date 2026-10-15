@@ -29,7 +29,7 @@ void UI::processEvent(const sf::Event &event) {
 
 bool UI::hasMouseCapture() { return ImGui::GetIO().WantCaptureMouse; }
 
-void UI::draw() {
+void UI::draw(const bool isPaused) {
   ImGui::SetNextWindowPos(sidePanelPos);
   ImGui::SetNextWindowSize(sidePanelSize);
   ImGui::Begin("Panel", nullptr,
@@ -46,6 +46,10 @@ void UI::draw() {
                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
   ImGui::SliderFloat("Simulation Speed", &input_simulation_speed, 0.2f, 5.0f,
                      "%.2fx");
+
+  if (isPaused) {
+    ImGui::TextColored(ImVec4(1.0, 0, 0, 1), "Paused");
+  }
   ImGui::End();
 }
 
@@ -111,3 +115,11 @@ bool UI::consumeInspectorClose() {
 void UI::render() { ImGui::SFML::Render(window); }
 
 void UI::shutdown() { ImGui::SFML::Shutdown(); }
+
+void UI::resetUI() {
+  input_mass = DEFAULT_INPUT_MASS;
+  input_radius = DEFAULT_INPUT_RADIUS;
+  input_simulation_speed = DEFAULT_SIMULATION_SPEED;
+  inspectorCloseRequested = false;
+  resetInspectorLayout();
+}

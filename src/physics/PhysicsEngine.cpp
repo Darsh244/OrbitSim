@@ -11,8 +11,8 @@ PhysicsEngine::PhysicsEngine() : bodies{} {
 void PhysicsEngine::addCelestialBody(float m, float r, sf::Vector2f p,
                                      sf::Vector2f v, sf::Vector2f a,
                                      sf::Color c) {
-  incrementCount();
   bodies.push_back({countBodies, m, r, p, v, a, c});
+  incrementCount();
 }
 
 void PhysicsEngine::removeBodyAtIndex(const int idx) {

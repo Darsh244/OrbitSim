@@ -24,10 +24,10 @@ void Simulator::run() {
           *event); // handleEvent expects a sf::Event, event is std::optional
     }
     ui.update(timer.getdeltaTimeSFML());
-    if (!paused)
+    if (!paused && !ui.isPauseRequested())
       handlePhysics();
     window.clear();
-    ui.draw(paused);
+    ui.draw(paused || ui.isPauseRequested(), engine.getConfig());
     if (selectedBodyId) {
       if (auto info = engine.getBodyInfo(*selectedBodyId)) {
         sf::Vector2f anchor = camera.giveScreenPos(info->position);
@@ -41,6 +41,7 @@ void Simulator::run() {
       selectedBodyId.reset();
       ui.resetInspectorLayout();
     }
+
     handleRendering();
     window.display();
   }
@@ -150,7 +151,8 @@ void Simulator::handleEvent(const sf::Event &event) {
   else if (event.is<sf::Event::KeyPressed>()) {
     const auto *keyPressed = event.getIf<sf::Event::KeyPressed>();
     if (keyPressed->code == sf::Keyboard::Key::Space) {
-      paused = !paused;
+      if (!ui.isPauseRequested())
+        paused = !paused;
     } else if (keyPressed->code == sf::Keyboard::Key::R) {
       resetSimulator();
     }

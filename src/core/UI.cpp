@@ -1,4 +1,5 @@
 #include "core/UI.h"
+#include "core/SimConfig.h"
 #include "imgui-SFML.h"
 #include <imgui.h>
 #include <stdexcept>
@@ -29,14 +30,18 @@ void UI::processEvent(const sf::Event &event) {
 
 bool UI::hasMouseCapture() { return ImGui::GetIO().WantCaptureMouse; }
 
-void UI::draw(const bool isPaused) {
+void UI::draw(const bool isPaused, SimConfig &config) {
   ImGui::SetNextWindowPos(sidePanelPos);
   ImGui::SetNextWindowSize(sidePanelSize);
   ImGui::Begin("Panel", nullptr,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_NoCollapse);
-  ImGui::InputFloat("Mass", &input_mass);
-  ImGui::InputFloat("Radius", &input_radius);
+  ImGui::InputFloat("Mass", &input_mass, 0.0f, 0.0f, "%g");
+  ImGui::InputFloat("Radius", &input_radius, 0.0f, 0.0f, "%g");
+
+  if (ImGui::Button("Settings"))
+    requestedSettingsOpen = true;
+
   ImGui::End();
 
   ImGui::SetNextWindowPos(topPanelPos);
@@ -44,13 +49,19 @@ void UI::draw(const bool isPaused) {
   ImGui::Begin("Panel2", nullptr,
                ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                    ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
-  ImGui::SliderFloat("Simulation Speed", &input_simulation_speed, 0.2f, 5.0f,
-                     "%.2fx");
+  ImGui::SliderFloat(
+      "Simulation Speed", &input_simulation_speed, 0.1f, 5.0f, "%.2fx",
+      ImGuiSliderFlags_Logarithmic | ImGuiSliderFlags_AlwaysClamp);
 
   if (isPaused) {
     ImGui::TextColored(ImVec4(1.0, 0, 0, 1), "Paused");
   }
   ImGui::End();
+
+  if (requestedSettingsOpen) {
+    uiRequestedPause = true;
+    showSettings(config);
+  }
 }
 
 void UI::showBodyInfo(const BodyInfo &info, const float anchorX,
@@ -82,17 +93,17 @@ void UI::showBodyInfo(const BodyInfo &info, const float anchorX,
 
   ImGui::SeparatorText("Identity");
   ImGui::Text("Id: %d", info.id);
-  ImGui::Text("Mass: %.2f kg", info.mass);
-  ImGui::Text("Radius: %.2f m", info.radius);
+  ImGui::Text("Mass: %.2f", info.mass);
+  ImGui::Text("Radius: %.2f", info.radius);
 
   ImGui::SeparatorText("Motion");
   ImGui::Text("Position: (%.2f, %.2f)", info.position.x, info.position.y);
   ImGui::Text("Velocity: (%.2f, %.2f)", info.velocity.x, info.velocity.y);
-  ImGui::Text("Speed: %.2f m/s", info.speed);
+  ImGui::Text("Speed: %.2f", info.speed);
 
   ImGui::SeparatorText("Derived");
   ImGui::Text("Momentum: (%.2f, %.2f)", info.momentum.x, info.momentum.y);
-  ImGui::Text("Kinetic Energy: %.2f J", info.kineticEnergy);
+  ImGui::Text("Kinetic Energy: %.2f ", info.kineticEnergy);
 
   ImGui::End();
 
@@ -110,6 +121,18 @@ bool UI::consumeInspectorClose() {
   bool requested = inspectorCloseRequested;
   inspectorCloseRequested = false;
   return requested;
+}
+
+void UI::showSettings(SimConfig &config) {
+  ImGui::Begin("Settings", &requestedSettingsOpen);
+  ImGui::SliderFloat("G", &config.G, 0.1f, 10000.0f, "%.2f",
+                     ImGuiSliderFlags_Logarithmic |
+                         ImGuiSliderFlags_AlwaysClamp);
+  ImGui::Checkbox("Gravity enabled", &config.gravityEnabled);
+  ImGui::End();
+
+  if (!requestedSettingsOpen)
+    uiRequestedPause = false;
 }
 
 void UI::render() { ImGui::SFML::Render(window); }

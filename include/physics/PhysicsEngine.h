@@ -1,6 +1,7 @@
 #pragma once
 #include "core/BodyInfo.h"
 #include "core/CelestialBody.h"
+#include "core/SimConfig.h"
 #include <optional>
 #include <vector>
 
@@ -9,15 +10,10 @@ class PhysicsEngine {
   int countBodies = 1;
 
   // engine variables
-  float G;
-  float KG_PER_MASS_UNIT;
-  float METERS_PER_PIXEL;
-  static constexpr float DEFAULT_G = 500.0f;
-  static constexpr float DEFAULT_KG_PER_MASS_UNIT = 1.0f;
-  static constexpr float DEFAULT_METERS_PER_PIXEL = 1.0f;
+  SimConfig config;
 
 public:
-  PhysicsEngine();
+  PhysicsEngine() = default;
 
   // UTILITY
   void addCelestialBody(float m, float r, sf::Vector2f p,
@@ -29,6 +25,8 @@ public:
   void resetEngine();
   const std::vector<CelestialBody> &getBodies() const { return bodies; }
   std::vector<CelestialBody> &getBodies() { return bodies; }
+  SimConfig &getConfig() { return config; }
+  const SimConfig &getConfig() const { return config; }
 
   // mouse click detection
   std::optional<int> findBodyAt(const sf::Vector2f &mouseWorldPos) const;

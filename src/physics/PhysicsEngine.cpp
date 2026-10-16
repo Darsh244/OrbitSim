@@ -1,12 +1,6 @@
 #include "physics/PhysicsEngine.h"
 #include <cmath>
 
-PhysicsEngine::PhysicsEngine() : bodies{} {
-  G = DEFAULT_G;
-  KG_PER_MASS_UNIT = DEFAULT_KG_PER_MASS_UNIT;
-  METERS_PER_PIXEL = DEFAULT_METERS_PER_PIXEL;
-}
-
 // UTILITY
 void PhysicsEngine::addCelestialBody(float m, float r, sf::Vector2f p,
                                      sf::Vector2f v, sf::Vector2f a,
@@ -38,9 +32,7 @@ void PhysicsEngine::resetAcceleration() {
 }
 
 void PhysicsEngine::resetEngine() {
-  G = DEFAULT_G;
-  KG_PER_MASS_UNIT = DEFAULT_KG_PER_MASS_UNIT;
-  METERS_PER_PIXEL = DEFAULT_METERS_PER_PIXEL;
+  config = SimConfig{};
   bodies.clear();
   countBodies = 1;
 }
@@ -158,6 +150,8 @@ PhysicsEngine::posOfMergedBodyAfterCollision(const CelestialBody &body1,
 
 // GRAVITY
 void PhysicsEngine::calculateGravity() {
+  if (!config.gravityEnabled)
+    return;
   for (int i = 0; i < bodies.size(); i++) {
     for (int j = i + 1; j < bodies.size(); j++) {
       calculateGravityBetweenBodies(bodies[i], bodies[j]);
@@ -186,16 +180,16 @@ float PhysicsEngine::calculateGravitationalForce(float m1, float m2,
                                                  sf::Vector2f &pos1,
                                                  sf::Vector2f &pos2) {
   sf::Vector2f displacementVector = pos2 - pos1;
-  float ProductofMasses = (m1 * m2) * powf(KG_PER_MASS_UNIT, 2);
-  float SquareOfDistance = powf(displacementVector.x * METERS_PER_PIXEL, 2) +
-                           powf(displacementVector.y * METERS_PER_PIXEL, 2);
-  return G * (ProductofMasses / SquareOfDistance);
+  float ProductofMasses = (m1 * m2);
+  float SquareOfDistance =
+      powf(displacementVector.x, 2) + powf(displacementVector.y, 2);
+  return config.G * (ProductofMasses / SquareOfDistance);
 }
 
 sf::Vector2f PhysicsEngine::findDirectionOfForce(sf::Vector2f &pos1,
                                                  sf::Vector2f &pos2) {
   sf::Vector2f displacementVector = pos2 - pos1;
-  float magnitude = sqrtf(powf(displacementVector.x * METERS_PER_PIXEL, 2) +
-                          powf(displacementVector.y * METERS_PER_PIXEL, 2));
+  float magnitude =
+      sqrtf(powf(displacementVector.x, 2) + powf(displacementVector.y, 2));
   return displacementVector / magnitude;
 }

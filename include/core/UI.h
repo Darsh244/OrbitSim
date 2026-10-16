@@ -1,5 +1,6 @@
 #pragma once
 #include "core/BodyInfo.h"
+#include "core/SimConfig.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <imgui.h>
@@ -33,6 +34,8 @@ class UI {
   bool inspectorMoved = false;
   bool inspectorCloseRequested = false;
   bool inspectorResized = false;
+  bool uiRequestedPause = false;
+  bool requestedSettingsOpen = false;
 
 public:
   UI(sf::RenderWindow &win);
@@ -41,7 +44,7 @@ public:
   void processEvent(const sf::Event &event);
   bool hasMouseCapture();
 
-  void draw(const bool isPaused);
+  void draw(const bool isPaused, SimConfig &config);
   void render();
   void shutdown();
   void resetUI();
@@ -52,8 +55,12 @@ public:
   bool consumeInspectorClose();
   void resetInspectorLayout();
 
+  // settings window
+  void showSettings(SimConfig &config);
+
   // getters
   float getInputMass() const { return input_mass; }
   float getInputRadius() { return input_radius; }
   float getSimulationSpeed() { return input_simulation_speed; }
+  bool isPauseRequested() { return uiRequestedPause; }
 };

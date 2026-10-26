@@ -128,6 +128,12 @@ void UI::showSettings(SimConfig &config) {
   ImGui::SliderFloat("G", &config.G, 0.1f, 10000.0f, "%.2f",
                      ImGuiSliderFlags_Logarithmic |
                          ImGuiSliderFlags_AlwaysClamp);
+  ImGui::SliderFloat(
+      "Kg per mass unit", &config.KG_PER_MASS_UNIT, 0.01f, 10000.0f, "%.2f",
+      ImGuiSliderFlags_Logarithmic | ImGuiSliderFlags_AlwaysClamp);
+  ImGui::SliderFloat(
+      "Meters per pixel", &config.METERS_PER_PIXEL, 0.01f, 10000.0f, "%.2f",
+      ImGuiSliderFlags_Logarithmic | ImGuiSliderFlags_AlwaysClamp);
   ImGui::Checkbox("Gravity enabled", &config.gravityEnabled);
   ImGui::End();
 

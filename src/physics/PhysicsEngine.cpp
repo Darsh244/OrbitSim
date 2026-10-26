@@ -168,8 +168,12 @@ void PhysicsEngine::calculateGravityBetweenBodies(CelestialBody &body1,
   float gravityMagnitude = calculateGravitationalForce(m1, m2, pos1, pos2);
   sf::Vector2f directionOfForceOnBody1 = findDirectionOfForce(pos1, pos2);
 
-  sf::Vector2f a1 = (gravityMagnitude / m1) * directionOfForceOnBody1;
-  sf::Vector2f a2 = (gravityMagnitude / m2) * (-directionOfForceOnBody1);
+  float kg1 = m1 * config.KG_PER_MASS_UNIT;
+  float kg2 = m2 * config.KG_PER_MASS_UNIT;
+  sf::Vector2f a1 = (gravityMagnitude / kg1 / config.METERS_PER_PIXEL) *
+                    directionOfForceOnBody1;
+  sf::Vector2f a2 = (gravityMagnitude / kg2 / config.METERS_PER_PIXEL) *
+                    (-directionOfForceOnBody1);
   body1.setAcceleration(
       body1.getAcceleration() +
       a1); // incrementing acceleration from force exerted by all other bodies
@@ -180,9 +184,10 @@ float PhysicsEngine::calculateGravitationalForce(float m1, float m2,
                                                  sf::Vector2f &pos1,
                                                  sf::Vector2f &pos2) {
   sf::Vector2f displacementVector = pos2 - pos1;
-  float ProductofMasses = (m1 * m2);
+  float ProductofMasses = (m1 * m2) * powf(config.KG_PER_MASS_UNIT, 2);
   float SquareOfDistance =
-      powf(displacementVector.x, 2) + powf(displacementVector.y, 2);
+      powf(displacementVector.x * config.METERS_PER_PIXEL, 2) +
+      powf(displacementVector.y * config.METERS_PER_PIXEL, 2);
   return config.G * (ProductofMasses / SquareOfDistance);
 }
 

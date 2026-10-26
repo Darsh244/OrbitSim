@@ -1,5 +1,5 @@
 #include "core/Camera.h"
-
+#include <algorithm>
 void Camera::handleClick(const sf::Vector2f &newMousePos) {
   isClicking = true;
   mousePos = newMousePos;
@@ -15,6 +15,7 @@ void Camera::handleScroll(const sf::Vector2f &newMousePos,
                           const float scrollDelta) {
   sf::Vector2f mouseWorldPosBeforeZoom = giveWorldPos(newMousePos);
   zoomValue += cameraZoomSpeed * scrollDelta;
+  zoomValue = std::clamp(zoomValue, 0.1f, 10.0f);
   cameraOffset = mouseWorldPosBeforeZoom -
                  newMousePos / zoomValue; // mouse world position should stay
                                           // the same before and after zoom

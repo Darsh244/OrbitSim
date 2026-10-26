@@ -23,6 +23,7 @@ class UI {
   static constexpr float DEFAULT_INPUT_MASS = 50.0f;
   static constexpr float DEFAULT_INPUT_RADIUS = 20.0f;
   static constexpr float DEFAULT_SIMULATION_SPEED = 1.0f;
+  static constexpr float MIN_INPUT_VALUE = 0.1f;
 
   // inspector window
   ImVec2 inspectorPanelSize;

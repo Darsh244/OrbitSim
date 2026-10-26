@@ -1,6 +1,7 @@
 #include "core/UI.h"
 #include "core/SimConfig.h"
 #include "imgui-SFML.h"
+#include <algorithm>
 #include <imgui.h>
 #include <stdexcept>
 
@@ -38,6 +39,8 @@ void UI::draw(const bool isPaused, SimConfig &config) {
                    ImGuiWindowFlags_NoCollapse);
   ImGui::InputFloat("Mass", &input_mass, 0.0f, 0.0f, "%g");
   ImGui::InputFloat("Radius", &input_radius, 0.0f, 0.0f, "%g");
+  input_mass = std::max(input_mass, MIN_INPUT_VALUE);
+  input_radius = std::max(input_radius, MIN_INPUT_VALUE);
 
   if (ImGui::Button("Settings"))
     requestedSettingsOpen = true;

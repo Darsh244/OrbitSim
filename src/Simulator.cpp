@@ -3,6 +3,7 @@
 #include "renderer/Renderer.h"
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/WindowEnums.hpp>
+#include <algorithm>
 #include <iostream>
 
 Simulator::Simulator(unsigned windowWidth, unsigned windowHeight)
@@ -61,12 +62,13 @@ void Simulator::resetSimulator() {
 }
 
 void Simulator::handlePhysics() {
+  constexpr float MAX_DELTA_TIME = 0.05f;
+  float dt = std::min(timer.getDeltaTime(), MAX_DELTA_TIME);
   engine.resetAcceleration(); // if we dont reset then acceleration will
                               // continuously accumulate, instead of being
                               // recalculated for current state
   engine.calculateGravity();
-  engine.moveBodies(timer.getDeltaTime() *
-                    ui.getSimulationSpeed()); // uses time since last frame
+  engine.moveBodies(dt * ui.getSimulationSpeed()); // uses time since last frame
   engine.calculateCollisions();
 }
 

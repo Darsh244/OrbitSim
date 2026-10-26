@@ -52,27 +52,15 @@ PhysicsEngine::findBodyAt(const sf::Vector2f &mouseWorldPos) const {
 }
 
 std::optional<BodyInfo> PhysicsEngine::getBodyInfo(const int bodyId) const {
-  int left = 0;
-  int right = bodies.size() - 1;
-  while (left <= right) {
-    int mid = (left + right) / 2;
-    int id = bodies[mid].getId();
-    if (id == bodyId) {
-      float mass = bodies[mid].getMass();
-      sf::Vector2f velocity = bodies[mid].getVelocity();
+  for (const auto &body : bodies) {
+    if (body.getId() == bodyId) {
+      float mass = body.getMass();
+      sf::Vector2f velocity = body.getVelocity();
       float speed = velocity.length();
-      return BodyInfo{bodyId,
-                      mass,
-                      bodies[mid].getRadius(),
-                      bodies[mid].getPosition(),
-                      velocity,
-                      speed,
-                      mass * velocity,
-                      0.5f * mass * speed * speed};
-    } else if (id < bodyId) {
-      left = mid + 1;
-    } else
-      right = mid - 1;
+      return BodyInfo{
+          bodyId,   mass,  body.getRadius(), body.getPosition(),
+          velocity, speed, mass * velocity,  0.5f * mass * speed * speed};
+    }
   }
   return std::nullopt;
 }

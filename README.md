@@ -2,7 +2,7 @@
 
 A C++ N-body gravity simulator built with SFML and Dear ImGui. You spawn bodies with a mass, radius, and starting velocity, then watch them attract each other, orbit, slingshot, and merge in real time. Gravity strength, simulation speed, and the unit scaling can all be changed while it runs.
 
-<!-- ![OrbitSim demo](asset/docs/OrbitSim_Demo.gif) -->
+![OrbitSim demo](asset/docs/orbit_demo.gif)
 
 ## What it does
 
@@ -25,6 +25,8 @@ Most gravity demos show you one fixed scenario. This one is built to be played w
 - **Merging**: the merged body's mass is the sum of the two masses, its velocity is the momentum-weighted average (so total momentum is conserved), and it appears at the center of mass of the pair. Its radius is chosen so the merged body's area equals the sum of the two original areas.
 - **Unit scaling**: the settings window has a kg-per-mass-unit and a meters-per-pixel value that scale the gravity calculation, so you can experiment with different unit systems. The inspector always displays raw simulation units.
 
+![Bodies colliding and merging](asset/docs/collisions_demo.gif)
+
 ## Controls
 
 - **Right click and drag**: spawn a body at the click position. Drag away from the direction you want it to travel, like pulling back a slingshot, and release to launch it.
@@ -36,6 +38,8 @@ Most gravity demos show you one fixed scenario. This one is built to be played w
 - The side panel sets the mass and radius used for newly spawned bodies, and has a button that opens the settings window.
 - The top panel has a simulation speed slider.
 - The settings window changes the gravitational constant, the unit scaling, and whether gravity is enabled. The simulation pauses while it is open.
+
+![Changing settings while the simulation runs](asset/docs/settings_demo.gif)
 
 The inspector follows its body as it moves. You can drag it, resize it, or close it, and it closes on its own if the body it is tracking merges into another one.
 
